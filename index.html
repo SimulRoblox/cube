@@ -207,15 +207,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const mainContent = document.querySelector('.main-content');
   const searchInput = document.getElementById('searchInput');
 
-  setTimeout(() => {
-    loading.style.display = 'none';
-    loadingBg.style.display = 'none';
-    logo.style.display = 'none';
-    topBar.style.display = 'flex';
-    navBar.style.display = 'flex';
-    mainContent.style.display = 'flex';
-    searchInput.focus();
-  }, 2000);
+setTimeout(() => {
+  loading.style.display = 'none';
+  loadingBg.style.display = 'none';
+  logo.style.display = 'none';
+
+  topBar.style.display = 'flex';
+  navBar.style.display = 'flex';
+  mainContent.style.display = 'flex';
+
+  topBar.style.visibility = 'visible';
+  navBar.style.visibility = 'visible';
+  mainContent.style.visibility = 'visible';
+
+  searchInput.focus();
+}, 2000);
 
 window.handleSearch = function(event) {
   event.preventDefault();
