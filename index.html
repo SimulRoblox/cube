@@ -106,6 +106,7 @@ html, body {
   border: 1px solid #666666;
   box-sizing: border-box;
   overflow: hidden;
+  cursor: pointer;
 }
 .content-item:focus {
   border: 3px solid #fff;
@@ -206,31 +207,48 @@ document.addEventListener('DOMContentLoaded', () => {
   const navBar = document.querySelector('.nav-bar');
   const mainContent = document.querySelector('.main-content');
   const searchInput = document.getElementById('searchInput');
+  const contentItems = document.querySelectorAll('.content-item');
 
-setTimeout(() => {
-  loading.style.display = 'none';
-  loadingBg.style.display = 'none';
-  logo.style.display = 'none';
+  // Show main content after loading
+  setTimeout(() => {
+    loading.style.display = 'none';
+    loadingBg.style.display = 'none';
+    logo.style.display = 'none';
 
-  topBar.style.display = 'flex';
-  navBar.style.display = 'flex';
-  mainContent.style.display = 'flex';
+    topBar.style.display = 'flex';
+    navBar.style.display = 'flex';
+    mainContent.style.display = 'flex';
 
-  topBar.style.visibility = 'visible';
-  navBar.style.visibility = 'visible';
-  mainContent.style.visibility = 'visible';
+    // Set focus to the first show for convenience
+    if (contentItems.length > 0) {
+      contentItems[0].focus();
+    }
 
-  searchInput.focus();
-}, 2000);
+    searchInput.focus();
+  }, 2000);
 
-window.handleSearch = function(event) {
-  event.preventDefault();
-  const val = searchInput.value.toLowerCase();
-  contentItems.forEach(item => {
-    const alt = item.querySelector('img').alt.toLowerCase();
-    item.style.display = alt.includes(val) ? 'block' : 'none';
+  // Handle search filtering
+  window.handleSearch = function(event) {
+    event.preventDefault();
+    const val = searchInput.value.toLowerCase();
+    contentItems.forEach(item => {
+      const alt = item.querySelector('img').alt.toLowerCase();
+      item.style.display = alt.includes(val) ? 'block' : 'none';
+    });
+  };
+
+  // Handle Enter key to redirect
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const active = document.activeElement;
+      if (active && active.classList.contains('content-item')) {
+        const videoName = encodeURIComponent(active.querySelector('img').alt);
+        window.location.href = `playback.html?video=${videoName}`;
+        e.preventDefault();
+      }
+    }
   });
-};
+});
 </script>
 
 </body>
