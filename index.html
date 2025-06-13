@@ -98,7 +98,7 @@ html, body {
   display: grid;
   grid-template-columns: repeat(4, 220px);
   grid-auto-rows: 124px;
-  gap: 10px;
+  gap: 10px;*-
 }
 .content-item {
   width: 220px;
@@ -218,8 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
     topBar.style.display = 'flex';
     navBar.style.display = 'flex';
     mainContent.style.display = 'flex';
-
-    // Set focus to the first show for convenience
     if (contentItems.length > 0) {
       contentItems[0].focus();
     }
@@ -237,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Handle Enter key to redirect
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       const active = document.activeElement;
