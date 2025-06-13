@@ -206,7 +206,7 @@ html, body {
 </div>
 <div id="errorOverlay">Playback error. Click to dismiss.</div>
 <script>
-const images = document.querySelectorAll('.content-item');
+const imgs = document.querySelectorAll('.content-item');
 
 const overlay = document.getElementById('errorOverlay');
 
@@ -236,8 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
     navBar.style.display = 'flex';
     mainContent.style.display = 'flex';
 
-    if (images.length > 0) {
-      images[0].focus();
+    if (imgs.length > 0) {
+      imgs[0].focus();
     }
     searchInput.focus();
   }, 2000);
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.handleSearch = function(event) {
     event.preventDefault();
     const val = searchInput.value.toLowerCase();
-    images.forEach(img => {
+    imgs.forEach(img => {
       const altText = img.querySelector('img').alt.toLowerCase();
       img.style.display = altText.includes(val) ? 'block' : 'none';
     });
@@ -254,25 +254,25 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', (e) => {
     const focused = document.activeElement;
     if (focused && focused.classList.contains('content-item')) {
-      const index = Array.prototype.indexOf.call(images, focused);
+      const index = Array.prototype.indexOf.call(imgs, focused);
       const cols = 4;
-      const total = images.length;
+      const total = imgs.length;
       let newIndex = index;
       if (e.key === 'ArrowRight') {
         newIndex = (index + 1) % total;
-        images[newIndex].focus();
+        imgs[newIndex].focus();
         e.preventDefault();
       } else if (e.key === 'ArrowLeft') {
         newIndex = (index - 1 + total) % total;
-        images[newIndex].focus();
+        imgs[newIndex].focus();
         e.preventDefault();
       } else if (e.key === 'ArrowDown') {
         newIndex = (index + cols) % total;
-        images[newIndex].focus();
+        imgs[newIndex].focus();
         e.preventDefault();
       } else if (e.key === 'ArrowUp') {
         newIndex = (index - cols + total) % total;
-        images[newIndex].focus();
+        imgs[newIndex].focus();
         e.preventDefault();
       }
     } else if (e.key === 'Enter') {
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  images.forEach(img => {
+  imgs.forEach(img => {
     img.addEventListener('click', () => {
       showError();
     });
