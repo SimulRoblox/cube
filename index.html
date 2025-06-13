@@ -209,7 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('searchInput');
   const contentItems = document.querySelectorAll('.content-item');
 
-  // Show main content after loading
   setTimeout(() => {
     loading.style.display = 'none';
     loadingBg.style.display = 'none';
@@ -219,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
     navBar.style.display = 'flex';
     mainContent.style.display = 'flex';
 
-    // Set focus to the first show for convenience
     if (contentItems.length > 0) {
       contentItems[0].focus();
     }
@@ -227,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.focus();
   }, 2000);
 
-  // Handle search filtering
   window.handleSearch = function(event) {
     event.preventDefault();
     const val = searchInput.value.toLowerCase();
@@ -237,12 +234,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Handle Enter key to redirect
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const active = document.activeElement;
-      if (active && active.classList.contains('content-item')) {
-        const videoName = encodeURIComponent(active.querySelector('img').alt);
+    const active = document.activeElement;
+    if (active && active.classList.contains('content-item')) {
+      const focusables = Array.from(document.querySelectorAll('.content-item'));
+      const index = focusables.indexOf(active);
+      const columns = 4;
+      const total = focusables.length;
+      let newIndex = index;
+      if (e.key === 'ArrowRight') {
+        newIndex = (index + 1) % total;
+        focusables[newIndex].focus();
+        e.preventDefault();
+      } else if (e.key === 'ArrowLeft') {
+        newIndex = (index - 1 + total) % total;
+        focusables[newIndex].focus();
+        e.preventDefault();
+      } else if (e.key === 'ArrowDown') {
+        newIndex = (index + columns) % total;
+        focusables[newIndex].focus();
+        e.preventDefault();
+      } else if (e.key === 'ArrowUp') {
+        newIndex = (index - columns + total) % total;
+        focusables[newIndex].focus();
+        e.preventDefault();
+      }
+    } else if (e.key === 'Enter') {
+      if (document.activeElement && document.activeElement.classList.contains('content-item')) {
+        const videoName = encodeURIComponent(document.activeElement.querySelector('img').alt);
         window.location.href = `playback.html?video=${videoName}`;
         e.preventDefault();
       }
