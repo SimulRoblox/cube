@@ -145,21 +145,30 @@ html, body {
   max-width: 100%;
   height: auto;
 }
+#errorOverlay {
+  position: fixed;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  font-size: 36px;
+  color: #fff;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
 
 <div id="loading-background"><img src="companion_background.png" alt="loading background" /></div>
-
 <div id="loading-indicator">
   <img src="spinner_loading.gif" alt="Loading" />
   Loading
 </div>
-
 <div id="center-logo">
   <img src="hulu_color_large.png" />
 </div>
-
 <div class="top-bar" style="display:none;">
   <div class="logo">
     <img src="hulu_color_small.png" alt="hulu" />
@@ -168,37 +177,64 @@ html, body {
     <input type="text" id="searchInput" tabindex="0" autocomplete="off" />
   </form>
 </div>
-
 <div class="nav-bar" style="display:none;">
   <a href="#" tabindex="0" class="nav-link">Popular Shows</a>
   <a href="#" tabindex="0" class="nav-link">Popular Episodes</a>
   <a href="#" tabindex="0" class="nav-link">Popular Clips</a>
 </div>
-
 <div class="main-content" style="display:none;">
   <div class="content-section">
-    <div class="content-items" id="contentItems">
-      <div class="content-item" tabindex="0"><img src="https://img4.hulu.com/user/v3/artwork/1138ee62-b9d9-4561-8094-3f7cda4bbd22?size=600x338&format=webp" alt="The Rookie" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img4.hulu.com/user/v3/artwork/a6fcfa83-580b-4c82-9362-75a4e97eb665?size=600x338&format=webp" alt="Will Trent" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img2.hulu.com/user/v3/artwork/565d8976-9d26-4e63-866c-40f8a137ce5f?size=600x338&format=webp" alt="The Handmaid's Tale" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img4.hulu.com/user/v3/artwork/b767a2da-2797-4cb4-99cb-86cf8f2bc54a?size=600x338&format=webp" alt="General Hospital" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img2.hulu.com/user/v3/artwork/e0584459-c1b4-4022-8c5a-6dc3aed1ee1f?size=600x338&format=webp" alt="High Maintenance" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img.hulu.com/user/v3/artwork/309e7cc1-1177-4ab0-a51e-81e527f1f76e?size=600x338&format=webp" alt="Alert Missing Persons Unit" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img1.hulu.com/user/v3/artwork/7555c5c5-2552-41b1-b1fd-20e983cb4905?size=600x338&format=webp" alt="American Idol" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img2.hulu.com/user/v3/artwork/67deff3f-d568-4443-8990-cc576b6fea3c?size=600x338&format=webp" alt="The Cleaning Lady" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img4.hulu.com/user/v3/artwork/bf42f6f5-db26-4429-85e0-17e86d161c98?size=600x338&format=webp" alt="Vanderpump Villa" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img1.hulu.com/user/v3/artwork/02696a82-b780-4ee5-9383-026b90017fee?size=600x338&format=webp" alt="The View" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img4.hulu.com/user/v3/artwork/90f98ec7-4d99-4829-a5f0-f9b1d48aa70b?size=600x338&format=webp" alt="Power Book 3: Raising Kanan" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img4.hulu.com/user/v3/artwork/d1a5e117-5049-4f6a-ad4c-d7ae0c5346c5?size=600x338&format=webp" alt="Good American Family" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img3.hulu.com/user/v3/artwork/70d80af0-fce4-4d0b-a109-b440bd6012b0?size=600x338&format=webp" alt="Happily Ever After" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img1.hulu.com/user/v3/artwork/505f251f-ab3e-4f2b-a503-15dbbf1476e3?size=600x338&format=webp" alt="Chopped" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img.hulu.com/user/v3/artwork/7c160b55-f261-476a-b3f7-f3a6b083cba2?size=600x338&format=webp" alt="World News Tonight with David Muir" /></div>
-      <div class="content-item" tabindex="0"><img src="https://img3.hulu.com/user/v3/artwork/3c3c0f8b-7366-4d15-88ab-18050285978e?size=600x338&format=webp" alt="Family Guy" /></div>
-    </div>
+    <div class="content-items" id="contentItems"></div>
   </div>
 </div>
-
+<div id="errorOverlay">Playback error. Click to dismiss.</div>
 <script>
+const showData = [
+  {alt: "The Rookie", src: "https://img4.hulu.com/user/v3/artwork/1138ee62-b9d9-4561-8094-3f7cda4bbd22?size=600x338&format=webp"},
+  {alt: "Will Trent", src: "https://img4.hulu.com/user/v3/artwork/a6fcfa83-580b-4c82-9362-75a4e97eb665?size=600x338&format=webp"},
+  {alt: "The Handmaid's Tale", src: "https://img2.hulu.com/user/v3/artwork/565d8976-9d26-4e63-866c-40f8a137ce5f?size=600x338&format=webp"},
+  {alt: "General Hospital", src: "https://img4.hulu.com/user/v3/artwork/b767a2da-2797-4cb4-99cb-86cf8f2bc54a?size=600x338&format=webp"},
+  {alt: "High Maintenance", src: "https://img2.hulu.com/user/v3/artwork/e0584459-c1b4-4022-8c5a-6dc3aed1ee1f?size=600x338&format=webp"},
+  {alt: "Alert Missing Persons Unit", src: "https://img.hulu.com/user/v3/artwork/309e7cc1-1177-4ab0-a51e-81e527f1f76e?size=600x338&format=webp"},
+  {alt: "American Idol", src: "https://img1.hulu.com/user/v3/artwork/7555c5c5-2552-41b1-b1fd-20e983cb4905?size=600x338&format=webp"},
+  {alt: "The Cleaning Lady", src: "https://img2.hulu.com/user/v3/artwork/67deff3f-d568-4443-8990-cc576b6fea3c?size=600x338&format=webp"},
+  {alt: "Vanderpump Villa", src: "https://img4.hulu.com/user/v3/artwork/bf42f6f5-db26-4429-85e0-17e86d161c98?size=600x338&format=webp"},
+  {alt: "The View", src: "https://img1.hulu.com/user/v3/artwork/02696a82-b780-4ee5-9383-026b90017fee?size=600x338&format=webp"},
+  {alt: "Power Book 3: Raising Kanan", src: "https://img4.hulu.com/user/v3/artwork/90f98ec7-4d99-4829-a5f0-f9b1d48aa70b?size=600x338&format=webp"},
+  {alt: "Good American Family", src: "https://img4.hulu.com/user/v3/artwork/d1a5e117-5049-4f6a-ad4c-d7ae0c5346c5?size=600x338&format=webp"},
+  {alt: "Happily Ever After", src: "https://img3.hulu.com/user/v3/artwork/70d80af0-fce4-4d0b-a109-b440bd6012b0?size=600x338&format=webp"},
+  {alt: "Chopped", src: "https://img1.hulu.com/user/v3/artwork/505f251f-ab3e-4f2b-a503-15dbbf1476e3?size=600x338&format=webp"},
+  {alt: "World News Tonight with David Muir", src: "https://img.hulu.com/user/v3/artwork/7c160b55-f261-476a-b3f7-f3a6b083cba2?size=600x338&format=webp"},
+  {alt: "Family Guy", src: "https://img3.hulu.com/user/v3/artwork/3c3c0f8b-7366-4d15-88ab-18050285978e?size=600x338&format=webp"}
+];
+
+const contentContainer = document.getElementById('contentItems');
+const errorOverlay = document.getElementById('errorOverlay');
+
+function generateContentItems() {
+  showData.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'content-item';
+    div.setAttribute('tabindex', '0');
+    const img = document.createElement('img');
+    img.src = item.src;
+    img.alt = item.alt;
+    div.appendChild(img);
+    div.addEventListener('click', () => {
+      showError();
+    });
+    contentContainer.appendChild(div);
+  });
+}
+
+function showError() {
+  errorOverlay.style.display = 'flex';
+}
+
+errorOverlay.addEventListener('click', () => {
+  errorOverlay.style.display = 'none';
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   const loading = document.getElementById('loading-indicator');
   const loadingBg = document.getElementById('loading-background');
@@ -207,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const navBar = document.querySelector('.nav-bar');
   const mainContent = document.querySelector('.main-content');
   const searchInput = document.getElementById('searchInput');
-  const contentItems = Array.from(document.querySelectorAll('.content-item'));
+
+  generateContentItems();
 
   setTimeout(() => {
     loading.style.display = 'none';
@@ -223,6 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     searchInput.focus();
   }, 2000);
+
+  const contentItems = Array.from(document.querySelectorAll('.content-item'));
 
   window.handleSearch = function(event) {
     event.preventDefault();
@@ -259,8 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (e.key === 'Enter') {
       if (document.activeElement && document.activeElement.classList.contains('content-item')) {
-        const videoName = encodeURIComponent(document.activeElement.querySelector('img').alt);
-        window.location.href = `playback.html?video=${videoName}`;
+        showError();
         e.preventDefault();
       }
     }
